@@ -5,6 +5,7 @@ namespace Yectep\PhpSpreadsheetBundle;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\BaseWriter;
+use PhpOffice\PhpSpreadsheet\Writer\Exception;
 use PhpOffice\PhpSpreadsheet\Writer\IWriter;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -18,13 +19,12 @@ class Factory {
     /**
      * Returns a new instance of the PhpSpreadsheet class.
      *
-     * @param null|string $filename     If set, uses the IOFactory to return the spreadsheet located at $filename
+     * @param string|null $filename     If set, uses the IOFactory to return the spreadsheet located at $filename
      *                                  using automatic type resolution per \PhpOffice\PhpSpreadsheet\IOFactory.
      *
-     * @return Spreadsheet
      * @throws \PhpOffice\PhpSpreadsheet\Reader\Exception
      */
-    public function createSpreadsheet($filename = null): Spreadsheet
+    public function createSpreadsheet(?string $filename = null): Spreadsheet
     {
         return (is_null($filename) ? new Spreadsheet() : IOFactory::load($filename));
     }
@@ -32,24 +32,20 @@ class Factory {
     /**
      * Returns the PhpSpreadsheet IWriter instance to save a file.
      *
-     * @param Spreadsheet $spreadsheet
-     * @param             $type
-     *
-     * @return \PhpOffice\PhpSpreadsheet\Writer\IWriter
      * @throws \PhpOffice\PhpSpreadsheet\Writer\Exception
      */
-    public function createWriter(Spreadsheet $spreadsheet, $type): IWriter
+    public function createWriter(Spreadsheet $spreadsheet, string $type): IWriter
     {
         return IOFactory::createWriter($spreadsheet, $type);
     }
 
     /**
-     * @param string    $type   Reader class to create.
+     * @param string $type   Reader class to create.
      *
      * @return mixed            Returns a IReader of the given type if found.
      * @throws \InvalidArgumentException
      */
-    public function createReader($type)
+    public function createReader(string $type): mixed
     {
         $readerClass = '\\PhpOffice\\PhpSpreadsheet\\Reader\\' . $type;
         if (!class_exists($readerClass)) {
@@ -62,15 +58,9 @@ class Factory {
 
     /**
      * Return a StreamedResponse containing the file
-     * 
-     * @param Spreadsheet $spreadsheet
-     * @param string $type
-     * @param int $status
-     * @param array $headers
-     * @param array $writerOptions
-     * @return \Symfony\Component\HttpFoundation\StreamedResponse
+     * @throws Exception
      */
-    public function createStreamedResponse(Spreadsheet $spreadsheet, $type, $status = 200, $headers = array(), $writerOptions = array()): StreamedResponse
+    public function createStreamedResponse(Spreadsheet $spreadsheet, string $type, int $status = 200, array $headers = [], array $writerOptions = []): StreamedResponse
     {
         $writer = IOFactory::createWriter($spreadsheet, $type);
 
@@ -88,10 +78,9 @@ class Factory {
     }
 
     /**
-     * @param BaseWriter $writer
-     * @param array      $options
+     * @param array $options
      */
-    private function applyOptionsToWriter(BaseWriter $writer, $options = array())
+    private function applyOptionsToWriter(BaseWriter $writer, array $options = []): void
     {
         foreach ($options as $method => $arguments) {
             if (method_exists($writer, $method)) {

@@ -1,17 +1,17 @@
 # PhpSpreadsheetBundle
 
-This bundle integrates your Symfony 3/4/5 app with the PHPOffice PhpSpreadsheet
+This bundle integrates your Symfony 3/4/5/6 app with the PHPOffice PhpSpreadsheet
 productivity library.
 
 ## Requirements
 
 This bundle requires, in addition to prerequisites of each PHPOffice library:
 
-    * PHP 7.2 or higher
-    * Symfony 4 or higher
+    * PHP 8.0 or higher
+    * Symfony 4.4 or higher
 
 Note: Tags older than v1.0.0 (e.g. v0.2.0) are no longer supported due to deprecated status for both PHP <= 7.1 and Symfony <= 4.4.
-    
+
 ## Installation
 
 Use composer to require the latest stable version.
